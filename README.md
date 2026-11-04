@@ -70,6 +70,3 @@ This is a learning project, and it has real limits. The main ones:
 The accompanying tutorial discusses these limits, how to fix them and how venues defend
 against abuse.
 
-## Licence
-
-No licence has been chosen. Add one before publishing or reusing this code.
