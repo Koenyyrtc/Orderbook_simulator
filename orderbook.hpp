@@ -51,3 +51,24 @@ std::unordered_map<OrderId, Locator> index_;
             if (level.fifo.empty()) book.erase(level_it);  // never keep empty levels
         }
     }
+
+
+
+    template <class Book>
+    void rest(Book& book, const Order& o) {
+        PriceLevel& level = book[o.price];  // operator[] creates the level if missing
+        level.fifo.push_back(o);
+        level.total += o.qty;
+        index_.emplace(o.id, Locator{o.side, o.price, std::prev(level.fifo.end())});
+    }
+
+    std::optional<Order> remove_resting(OrderId id) {
+        auto found = index_.find(id);
+        if (found == index_.end()) return std::nullopt;
+        const Locator loc = found->second;
+        const Order removed = *loc.it;
+        if (loc.side == Side::Buy) erase_from(bids_, loc);
+        else                       erase_from(asks_, loc);
+        index_.erase(found);
+        return removed;
+    }
