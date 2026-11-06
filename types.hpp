@@ -1,11 +1,9 @@
-// types.hpp: the vocabulary shared by every other file.
 #pragma once
 
 #include <cstdint>
 
 namespace ob {
 
-// ---- Scalar types -----------------------------------------------------------
 using Price   = std::int64_t;  // integer number of ticks, never a float
 using Qty     = std::int64_t;  // signed, so "position -= fill" is safe
 using OrderId = std::uint64_t;
@@ -16,14 +14,12 @@ constexpr Time US  = 1'000;
 constexpr Time MS  = 1'000'000;
 constexpr Time SEC = 1'000'000'000;
 
-// ---- Enumerations -----------------------------------------------------------
 enum class Side : std::uint8_t { Buy, Sell };
 enum class OrderType : std::uint8_t { Limit, Market };
 enum class TimeInForce : std::uint8_t { GTC, IOC, FOK };
 
 constexpr Side opposite(Side s) { return s == Side::Buy ? Side::Sell : Side::Buy; }
 
-// ---- Order ------------------------------------------------------------------
 struct Order {
     OrderId     id        = 0;
     AgentId     owner     = 0;
@@ -36,7 +32,6 @@ struct Order {
     Time        ts        = 0;  // arrival time at the book (stamped by the book)
 };
 
-// ---- Trade ------------------------------------------------------------------
 struct Trade {
     OrderId taker_id;
     OrderId maker_id;
@@ -55,7 +50,6 @@ struct LevelInfo {
     int   orders;
 };
 
-// ---- Reasons attached to rejects and cancels --------------------------------
 enum class RejectReason : std::uint8_t {
     BadQuantity,
     BadPrice,
@@ -90,7 +84,6 @@ inline const char* to_string(RejectReason r) {
     return "?";
 }
 
-// ---- Event interface --------------------------------------------------------
 // The book reports everything that happens through this interface. Every method
 // has an empty default body, so a listener overrides only what it cares about.
 class Listener {
@@ -102,4 +95,4 @@ public:
     virtual void on_cancel(const Order&, CancelReason, Time) {}
 };
 
-}  // namespace ob
+}
